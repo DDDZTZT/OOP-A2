@@ -119,29 +119,68 @@ public class Ride implements RideInterface {
      * 
      * @param visitor The visitor to add to the queue
      */
+    // 实现addVisitorToQueue方法
     @Override
     public void addVisitorToQueue(Visitor visitor) {
-        
+        if (visitor == null) {
+            System.out.println("Error: Visitor object is null, cannot add to queue!");
+            return;
+        }
+        // Add visitor to queue
+        waitingQueue.offer(visitor);
+        System.out.printf("Success: Visitor %s added to queue %s, current queue size: %d%n",
+                visitor.getName(), this.rideName, waitingQueue.size());
     }
-
-    /**
-     * Removes a specific visitor from the waiting queue.
-     * 
-     * @param visitor The visitor to remove from the queue
-     */
+    
+    // 实现removeVisitorFromQueue方法
     @Override
     public void removeVisitorFromQueue(Visitor visitor) {
-       
+        // Validate queue status and visitor object
+        if (waitingQueue.isEmpty()) {
+            System.out.println("Error: Waiting queue is empty, cannot remove visitor!");
+            return;
+        }
+        if (visitor == null) {
+            System.out.println("Error: Visitor object is null, cannot remove!");
+            return;
+        }
+    
+        // Iterate through the queue to find the specified visitor
+        boolean isRemoved = waitingQueue.removeIf(v -> 
+                v.getVisitorCardNo().equals(visitor.getVisitorCardNo()));
+        
+        // Output result
+        if (isRemoved) {
+            System.out.printf("Success: Visitor %s has been removed from %s's waiting queue, current queue size: %d%n",
+                    visitor.getName(), this.rideName, waitingQueue.size());
+        } else {
+            System.out.printf("Failed: Visitor %s not found in %s's waiting queue%n",
+                    visitor.getName(), this.rideName);
+        }
     }
-
-    /**
-     * Prints the current state of the waiting queue.
-     */
+    
+    // 实现printQueue方法
     @Override
     public void printQueue() {
-        
+        if (waitingQueue.isEmpty()) {
+            System.out.printf("Info: %s's waiting queue is empty, no visitors waiting%n", this.rideName);
+            return;
+        }
+    
+        // Print queue details
+        System.out.printf("%s Waiting Queue Details (Total: %d people, Order: First Come First Served):%n",
+                this.rideName, waitingQueue.size());
+        int index = 1;
+        for (Visitor visitor : waitingQueue) {
+            System.out.printf("   %d. Name: %s | Age: %d | Card Number: %s | Entry Date: %s%n",
+                    index++,
+                    visitor.getName(),
+                    visitor.getAge(),
+                    visitor.getVisitorCardNo(),
+                    visitor.getEntryDate());
+        }
     }
-
+    
     /**
      * Adds a visitor to the ride history after they have ridden.
      * 
