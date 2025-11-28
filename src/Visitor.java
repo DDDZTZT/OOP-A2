@@ -1,3 +1,4 @@
+
 /**
  * The Visitor class extends the Person class to represent a visitor with additional visitor-specific information.
  * This class includes visitor identification details such as visitor card number and entry date.

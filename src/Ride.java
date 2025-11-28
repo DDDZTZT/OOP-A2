@@ -13,6 +13,8 @@ public class Ride implements RideInterface {
     private String rideName;       // Name of the amusement ride
     private int maxCapacity;       // Maximum number of visitors per ride cycle
     private Employee operator;     // Employee responsible for operating the ride
+    private int maxRider;          // Maximum number of visitors allowed per cycle
+    private int numOfCycles;       // Number of completed ride cycles
     
     // Data structures for managing visitors
     private Queue<Visitor> waitingQueue;  // FIFO queue for visitors waiting to ride
@@ -28,6 +30,8 @@ public class Ride implements RideInterface {
         this.operator = new Employee();  // Create a default operator
         this.waitingQueue = new LinkedList<>();  // Initialize empty waiting queue
         this.rideHistory = new LinkedList<>();   // Initialize empty ride history
+        this.maxRider = maxCapacity;  // Set maxRider to maxCapacity
+        this.numOfCycles = 0;  // Initialize number of completed cycles to 0
     }
 
     /**
@@ -41,6 +45,8 @@ public class Ride implements RideInterface {
         this.rideName = rideName;
         this.maxCapacity = maxCapacity;
         this.operator = operator;
+        this.maxRider = maxCapacity;  // Set maxRider to maxCapacity
+        this.numOfCycles = 0;  // Initialize number of completed cycles to 0
         this.waitingQueue = new LinkedList<>();  // Initialize empty waiting queue
         this.rideHistory = new LinkedList<>();   // Initialize empty ride history
     }
@@ -210,31 +216,51 @@ public class Ride implements RideInterface {
         System.out.printf("Success: %s's ride history sorted by specified rule\n", this.rideName);
     }
 
+    public int getMaxRider() { 
+        return maxRider; 
+    }
+    
+    public void setMaxRider(int maxRider) { 
+        // Ensure maxRider is at least 1
+        this.maxRider = maxRider < 1 ? 1 : maxRider;
+    }
+    
+    public int getNumOfCycles() { 
+        return numOfCycles; 
+    }
     @Override
     public void runOneCycle() {
-        System.out.printf("\nRunning one cycle for %s (Max capacity: %d)...\n", rideName, maxCapacity);
+        System.out.printf("\nRunning one cycle for %s (Max rider: %d)...\n", rideName, maxRider);
         
         // Check if there are visitors in the queue
         if (waitingQueue.isEmpty()) {
             System.out.println("No visitors in queue. Ride cycle completed with no passengers.");
             return;
         }
-        
+
+        // Check if operator is assigned
+        if (operator == null) {
+            System.out.println("Failed: No operator assigned to the ride, cannot run cycle!");
+            return;
+        }
+
         // Load visitors up to max capacity
         int loadedCount = 0;
         System.out.println("Loading visitors:");
         
-        while (!waitingQueue.isEmpty() && loadedCount < maxCapacity) {
+       while (!waitingQueue.isEmpty() && loadedCount < maxRider) {
             Visitor visitor = waitingQueue.poll();
             rideHistory.add(visitor);
             loadedCount++;
-            System.out.printf("  - Loaded visitor: %s (Card: %s)\n", visitor.getName(), visitor.getVisitorCardNo());
+            System.out.printf("  - Visitor %s (Card: %s) has boarded the ride\n", visitor.getName(), visitor.getVisitorCardNo());
         }
         
-        System.out.printf("\nRide in operation with %d visitors...\n", loadedCount);
+        // Increment cycle count
+        numOfCycles++;
         
-        // Simulate ride completion
-        System.out.printf("\nRide cycle completed. %d visitors have ridden and added to ride history.\n", loadedCount);
-        System.out.printf("Current queue size: %d | Ride history size: %d\n", waitingQueue.size(), rideHistory.size());
+        System.out.printf("\nRide cycle #%d completed successfully!\n", numOfCycles);
+        System.out.printf("  - %d visitors have ridden and added to ride history\n", loadedCount);
+        System.out.printf("  - Remaining queue size: %d\n", waitingQueue.size());
+        System.out.printf("  - Total ride history: %d visitors\n", rideHistory.size());
     }
 }

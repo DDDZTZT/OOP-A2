@@ -1,9 +1,10 @@
 public class AssignmentTwo {
     public static void main(String[] args) {
         AssignmentTwo demo = new AssignmentTwo();
-        demo.partThree();
-        demo.partFourA();
-        demo.partFourB();
+        // demo.partThree();
+        // demo.partFourA();
+        // demo.partFourB();
+        demo.partFive();
     }
      public void partThree() {
         System.out.println("==================================== Part3 ====================================");
@@ -123,7 +124,56 @@ public class AssignmentTwo {
         System.out.println("==================================== Part4B ====================================");
     }
     
-    public void partFive() {}
+public void partFive() {
+    System.out.println("\n============================== Part5 ====================================");
+    
+    // 1. Create operator to ensure not null
+    Employee rideOperator = new Employee(
+            "YYz", 38, "13500135000", 
+            "EMP003", "Thunder Coaster"
+    );
+
+    // 2. Create ride facility
+    Ride thunderCoaster = new Ride(
+            "Thunder Coaster", 4, rideOperator  // maxRider=4
+    );
+
+    // 3. Add at least 10 visitors to the waiting queue
+    System.out.println("[Step 1: Add 10 visitors to waiting queue]");
+    for (int i = 1; i <= 10; i++) {
+        Visitor visitor = new Visitor(
+                "Visitor" + i, 
+                15 + i,  // Age 16-25
+                "1300013000" + i, 
+                "VIS" + String.format("%03d", i),  // Card number VIS001-VIS010
+                "2025-12-01"
+        );
+        thunderCoaster.addVisitorToQueue(visitor);
+    }
+
+    // 4. Print waiting queue before operation
+    System.out.println("\n Waiting queue before operation (10 people total)");
+    thunderCoaster.printQueue();
+
+    // 5. Run one ride cycle
+    System.out.println("\n Run one ride cycle");
+    thunderCoaster.runOneCycle();
+
+    // 6. Print waiting queue after operation
+    System.out.println("\n Waiting queue after operation (6 people remaining)");
+    thunderCoaster.printQueue();
+
+    // 7. Print ride history after operation
+    System.out.println("\n Ride history after operation (4 new people added)");
+    thunderCoaster.printRideHistory();
+
+    // 8. Check total number of operations
+    System.out.printf("\n[%s] Total number of operations: %d times\n",
+            thunderCoaster.getRideName(), thunderCoaster.getNumOfCycles());
+
+    System.out.println("=========================== Part5 ====================================");
+}
+    
     public void partSix() {}
     public void partSeven() {}
 }
