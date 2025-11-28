@@ -1,8 +1,11 @@
 public class AssignmentTwo {
     public static void main(String[] args) {
-        partThree();
+        AssignmentTwo demo = new AssignmentTwo();
+        demo.partThree();
+        demo.partFourA();
+        demo.partFourB();
     }
-     public static void partThree() {
+     public void partThree() {
         System.out.println("==================================== Part3 ====================================");
         
         //create employee
@@ -46,8 +49,80 @@ public class AssignmentTwo {
         System.out.println("==================================== Part3 ====================================");
     }
 
-    public void partFourA() {}
-    public void partFourB() {}
+     public void partFourA() {
+        System.out.println("\n==================================== Part4A ====================================");
+        
+        // 1. create carousel ride
+        Employee operator = new Employee("Lee", 40, "13700137000", "EMP002", "Carousel");
+        Ride carousel = new Ride("Carousel", 4, operator);
+
+        // 2. create 5 visitors
+        Visitor v1 = new Visitor("Tom", 10, "13600136001", "VIS006", "2025-12-01");
+        Visitor v2 = new Visitor("Sherly", 8, "13600136002", "VIS007", "2025-12-01");
+        Visitor v3 = new Visitor("Ben", 12, "13600136003", "VIS008", "2025-12-02");
+        Visitor v4 = new Visitor("David", 9, "13600136004", "VIS009", "2025-12-02");
+        Visitor v5 = new Visitor("Jack", 11, "13600136005", "VIS010", "2025-12-01");
+
+        // 3. add 5 visitors to ride history
+        System.out.println("\n Add 5 visitors to ride history:");
+        carousel.addVisitorToHistory(v1);
+        carousel.addVisitorToHistory(v2);
+        carousel.addVisitorToHistory(v3);
+        carousel.addVisitorToHistory(v4);
+        carousel.addVisitorToHistory(v5);
+
+        // 4. check if visitor v3 exists in ride history
+        System.out.println("\n Check if visitor v3 exists in ride history:");
+        boolean isExists = carousel.checkVisitorFromHistory(v3);
+        System.out.printf("Visitor %s exists in ride history: %b%n", v3.getName(), isExists);
+
+        // 5. count the visiters number
+        System.out.println("\n Count the visiters number:");
+        carousel.numberOfVisitors();
+
+        // 6. print ride history
+        System.out.println("\n Print ride history: ");
+        carousel.printRideHistory();
+
+        System.out.println("==================================== Part4A ====================================");
+    }
+
+    public void partFourB() {
+        System.out.println("\n==================================== Part4B ====================================");
+        // 1. create carousel ride
+        Employee operator = new Employee("Lee", 40, "13700137000", "EMP002", "Carousel");
+        Ride carousel = new Ride("Carousel", 4, operator);
+
+        // 2. create 5 visitors
+        Visitor v1 = new Visitor("Tom", 10, "13600136001", "VIS006", "2025-12-01");
+        Visitor v2 = new Visitor("Sherly", 8, "13600136002", "VIS007", "2025-12-01");
+        Visitor v3 = new Visitor("Ben", 12, "13600136003", "VIS008", "2025-12-02");
+        Visitor v4 = new Visitor("David", 9, "13600136004", "VIS009", "2025-12-02");
+        Visitor v5 = new Visitor("Jack", 11, "13600136005", "VIS010", "2025-12-01");
+    
+        // 3. add 5 visitors to ride history
+        System.out.println("\n Add 5 visitors to ride history:");
+        carousel.addVisitorToHistory(v1);
+        carousel.addVisitorToHistory(v2);
+        carousel.addVisitorToHistory(v3);
+        carousel.addVisitorToHistory(v4);
+        carousel.addVisitorToHistory(v5);
+
+        // 4. print the order after sorting
+        System.out.println("\n Print ride history after sorting:");
+        carousel.printRideHistory();
+
+        // 5. sort the ride history
+        System.out.println("\n Sort ride history:");
+        carousel.sortRideHistory();
+
+        // 6. print the order after sorting
+        System.out.println("\n Print ride history after sorting:");
+        carousel.printRideHistory();
+
+        System.out.println("==================================== Part4B ====================================");
+    }
+    
     public void partFive() {}
     public void partSix() {}
     public void partSeven() {}

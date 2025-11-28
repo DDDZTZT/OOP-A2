@@ -1,5 +1,8 @@
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * The Ride class represents an amusement park ride with queue management and ride history functionality.
@@ -42,84 +45,21 @@ public class Ride implements RideInterface {
         this.rideHistory = new LinkedList<>();   // Initialize empty ride history
     }
 
-    /**
-     * Getter method for retrieving the ride name.
-     * 
-     * @return The name of the ride
-     */
-    public String getRideName() {
-        return rideName;
-    }
-
-    /**
-     * Setter method for updating the ride name.
-     * 
-     * @param rideName The new name to set for the ride
-     */
-    public void setRideName(String rideName) {
-        this.rideName = rideName;
-    }
-
-    /**
-     * Getter method for retrieving the maximum capacity of the ride.
-     * 
-     * @return The maximum number of visitors per ride cycle
-     */
-    public int getMaxCapacity() {
-        return maxCapacity;
-    }
-
-    /**
-     * Setter method for updating the maximum capacity of the ride.
-     * 
-     * @param maxCapacity The new maximum capacity to set
-     */
-    public void setMaxCapacity(int maxCapacity) {
-        this.maxCapacity = maxCapacity;
-    }
-
-    /**
-     * Getter method for retrieving the ride operator.
-     * 
-     * @return The employee responsible for operating the ride
-     */
-    public Employee getOperator() {
-        return operator;
-    }
-
-    /**
-     * Setter method for updating the ride operator.
-     * 
-     * @param operator The new employee to assign as operator
-     */
-    public void setOperator(Employee operator) {
-        this.operator = operator;
-    }
-
-    /**
-     * Getter method for retrieving the waiting queue of visitors.
-     * 
-     * @return The queue of visitors waiting to ride
-     */
-    public Queue<Visitor> getWaitingQueue() {
-        return waitingQueue;
-    }
-
-    /**
-     * Getter method for retrieving the ride history.
-     * 
-     * @return The list of visitors who have ridden the ride
-     */
-    public LinkedList<Visitor> getRideHistory() {
-        return rideHistory;
-    }
+    // Getters and setters (unchanged from original)
+    public String getRideName() { return rideName; }
+    public void setRideName(String rideName) { this.rideName = rideName; }
+    public int getMaxCapacity() { return maxCapacity; }
+    public void setMaxCapacity(int maxCapacity) { this.maxCapacity = maxCapacity; }
+    public Employee getOperator() { return operator; }
+    public void setOperator(Employee operator) { this.operator = operator; }
+    public Queue<Visitor> getWaitingQueue() { return waitingQueue; }
+    public LinkedList<Visitor> getRideHistory() { return rideHistory; }
 
     /**
      * Adds a visitor to the waiting queue for the ride.
      * 
      * @param visitor The visitor to add to the queue
      */
-    // 实现addVisitorToQueue方法
     @Override
     public void addVisitorToQueue(Visitor visitor) {
         if (visitor == null) {
@@ -132,7 +72,6 @@ public class Ride implements RideInterface {
                 visitor.getName(), this.rideName, waitingQueue.size());
     }
     
-    // 实现removeVisitorFromQueue方法
     @Override
     public void removeVisitorFromQueue(Visitor visitor) {
         // Validate queue status and visitor object
@@ -159,7 +98,6 @@ public class Ride implements RideInterface {
         }
     }
     
-    // 实现printQueue方法
     @Override
     public void printQueue() {
         if (waitingQueue.isEmpty()) {
@@ -181,54 +119,122 @@ public class Ride implements RideInterface {
         }
     }
     
-    /**
-     * Adds a visitor to the ride history after they have ridden.
-     * 
-     * @param visitor The visitor to add to the ride history
-     */
     @Override
     public void addVisitorToHistory(Visitor visitor) {
-        
+        if (visitor == null) {
+            System.out.println("Error: Visitor object is null, cannot add to history!");
+            return;
+        }
+        // check if visitor is already in history
+        if (checkVisitorFromHistory(visitor)) {
+            System.out.printf("Error: Visitor %s is already in %s's ride history, cannot add again%n",
+                    visitor.getName(), this.rideName);
+            return;
+        }
+        // add in the last
+        rideHistory.add(visitor);
+        System.out.printf("Success: Visitor %s added to %s's ride history, current history size: %d%n",
+                visitor.getName(), this.rideName, rideHistory.size());
     }
 
-    /**
-     * Checks if a specific visitor exists in the ride history.
-     * 
-     * @param visitor The visitor to check for in the history
-     * @return true if the visitor has ridden before, false otherwise
-     */
     @Override
     public boolean checkVisitorFromHistory(Visitor visitor) {
-       
+        if (rideHistory.isEmpty()) {
+            return false; // history is empty, visitor not found
+        }
+        if (visitor == null) {
+            System.out.println("Error: Visitor object is null, cannot check history!");
+            return false;
+        }
+        // check visitor by card number
+        for (Visitor v : rideHistory) {
+            if (v.getVisitorCardNo().equals(visitor.getVisitorCardNo())) {
+                return true;
+            }
+        }
         return false;
     }
 
-    /**
-     * Returns the total number of visitors who have ridden the ride.
-     * 
-     * @return The count of visitors in the ride history
-     */
     @Override
     public int numberOfVisitors() {
-        
-        return 0;
+        int count = rideHistory.size();
+        System.out.printf("Info: %s's ride history currently has %d visitors%n",
+                this.rideName, count);
+        return count;
     }
 
-    /**
-     * Prints the complete ride history.
-     */
     @Override
     public void printRideHistory() {
-        
+        if (rideHistory.isEmpty()) {
+            System.out.printf("Info: %s's ride history is empty, no riding records%n", this.rideName);
+            return;
+        }
+        // print ride history
+        System.out.printf("%s Ride History Details (Total: %d people, Order: Chronological):%n",
+                this.rideName, rideHistory.size());
+        Iterator<Visitor> iterator = rideHistory.iterator();
+        int index = 1;
+        while (iterator.hasNext()) {
+            Visitor visitor = iterator.next();
+            System.out.printf("   %d. Name: %s | Age: %d | Card Number: %s | Entry Date: %s%n",
+                    index++,
+                    visitor.getName(),
+                    visitor.getAge(),
+                    visitor.getVisitorCardNo(),
+                    visitor.getEntryDate());
+        }
     }
 
-    /**
-     * Simulates running one complete cycle of the ride,
-     * including loading passengers from the queue, operating the ride,
-     * and updating the ride history.
-     */
+    @Override
+    public void sortRideHistory() {
+        if (rideHistory.isEmpty()) {
+            System.out.printf("Error: %s's ride history is empty, cannot sort!\n", this.rideName);
+            return;
+        }
+        // Sort by visitor name alphabetically as default sort order
+        Collections.sort(rideHistory, (v1, v2) -> v1.getName().compareToIgnoreCase(v2.getName()));
+        System.out.printf("Success: %s's ride history sorted by visitor name alphabetically%n", this.rideName);
+    }
+
+    public void sortRideHistory(Comparator<Visitor> comparator) {
+        if (rideHistory.isEmpty()) {
+            System.out.printf("Error: %s's ride history is empty, cannot sort!\n", this.rideName);
+            return;
+        }
+        if (comparator == null) {
+            System.out.println("Error: Comparator object is null, cannot sort!");
+            return;
+        }
+        // sort ride history using Collections.sort()
+        Collections.sort(rideHistory, comparator);
+        System.out.printf("Success: %s's ride history sorted by specified rule\n", this.rideName);
+    }
+
     @Override
     public void runOneCycle() {
-       
+        System.out.printf("\nRunning one cycle for %s (Max capacity: %d)...\n", rideName, maxCapacity);
+        
+        // Check if there are visitors in the queue
+        if (waitingQueue.isEmpty()) {
+            System.out.println("No visitors in queue. Ride cycle completed with no passengers.");
+            return;
+        }
+        
+        // Load visitors up to max capacity
+        int loadedCount = 0;
+        System.out.println("Loading visitors:");
+        
+        while (!waitingQueue.isEmpty() && loadedCount < maxCapacity) {
+            Visitor visitor = waitingQueue.poll();
+            rideHistory.add(visitor);
+            loadedCount++;
+            System.out.printf("  - Loaded visitor: %s (Card: %s)\n", visitor.getName(), visitor.getVisitorCardNo());
+        }
+        
+        System.out.printf("\nRide in operation with %d visitors...\n", loadedCount);
+        
+        // Simulate ride completion
+        System.out.printf("\nRide cycle completed. %d visitors have ridden and added to ride history.\n", loadedCount);
+        System.out.printf("Current queue size: %d | Ride history size: %d\n", waitingQueue.size(), rideHistory.size());
     }
 }
