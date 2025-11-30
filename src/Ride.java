@@ -3,6 +3,11 @@ import java.util.Queue;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * The Ride class represents an amusement park ride with queue management and ride history functionality.
@@ -262,5 +267,116 @@ public class Ride implements RideInterface {
         System.out.printf("  - %d visitors have ridden and added to ride history\n", loadedCount);
         System.out.printf("  - Remaining queue size: %d\n", waitingQueue.size());
         System.out.printf("  - Total ride history: %d visitors\n", rideHistory.size());
+    }
+
+    /**
+     * Exports the ride history to a CSV file.
+     * Each visitor record is stored on a separate line with fields separated by commas.
+     * 
+     * @param filePath The path of the file to export to ride_history.csv
+     */
+    public void exportRideHistory(String filePath) {
+        // Validate input
+        if (filePath == null || filePath.trim().isEmpty()) {
+            System.out.println("Error: File path cannot be null or empty!");
+            return;
+        }
+        
+        // Check if ride history is empty
+        if (rideHistory.isEmpty()) {
+            System.out.println("Error: Ride history is empty, nothing to export!");
+            return;
+        }
+        
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            // Export each visitor in the ride history
+            for (Visitor visitor : rideHistory) {
+                // Format: name,age,phone,visitorCardNo,entryDate
+                String line = String.join(",", 
+                    visitor.getName(),
+                    String.valueOf(visitor.getAge()),
+                    visitor.getPhone(),
+                    visitor.getVisitorCardNo(),
+                    visitor.getEntryDate()
+                );
+                writer.write(line);
+                writer.newLine();
+            }
+            System.out.printf("Success: %d visitor records exported to %s\n", 
+                    rideHistory.size(), filePath);
+        } catch (IOException e) {
+            System.out.printf("Error exporting ride history to %s: %s\n", 
+                    filePath, e.getMessage());
+        } catch (Exception e) {
+            System.out.printf("Unexpected error during export: %s\n", e.getMessage());
+        }
+    }
+
+    /**
+     * Imports ride history from a CSV file.
+     * Each line in the file is expected to contain a visitor record with fields separated by commas.
+     * 
+     * @param filePath The path of the file to import from ride_history.csv
+     */
+    public void importRideHistory(String filePath) {
+        // Validate input
+        if (filePath == null || filePath.trim().isEmpty()) {
+            System.out.println("Error: File path cannot be null or empty!");
+            return;
+        }
+        
+        int importedCount = 0;
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Skip empty lines
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                
+                try {
+                    // Split the line into fields
+                    String[] fields = line.split(",");
+                    
+                    // Validate field count
+                    if (fields.length < 5) {
+                        System.out.printf("Warning: Invalid record format, skipping line: %s\n", line);
+                        continue;
+                    }
+                    
+                    // Create visitor object
+                    String name = fields[0];
+                    int age = Integer.parseInt(fields[1]);
+                    String phone = fields[2];
+                    String visitorCardNo = fields[3];
+                    String entryDate = fields[4];
+                    
+                    Visitor visitor = new Visitor(name, age, phone, visitorCardNo, entryDate);
+                    
+                    // Add to history if not already present
+                    if (!checkVisitorFromHistory(visitor)) {
+                        rideHistory.add(visitor);
+                        importedCount++;
+                    } else {
+                        System.out.printf("Warning: Visitor %s (Card: %s) already exists in history, skipping\n", 
+                                name, visitorCardNo);
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.printf("Warning: Invalid age format in line: %s\n", line);
+                } catch (Exception e) {
+                    System.out.printf("Warning: Failed to process line: %s, error: %s\n", line, e.getMessage());
+                }
+            }
+            
+            System.out.printf("Success: Import completed. %d visitor records imported to %s\n", 
+                    importedCount, this.rideName);
+            
+        } catch (IOException e) {
+            System.out.printf("Error importing ride history from %s: %s\n", 
+                    filePath, e.getMessage());
+        } catch (Exception e) {
+            System.out.printf("Unexpected error during import: %s\n", e.getMessage());
+        }
     }
 }
